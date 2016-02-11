@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)http://getbootstrap.com/examples/starter-template/ -->
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Locations of Sunrise Coal, LLC mines</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+            font-family: arial;
+            font-size: .95em;
+        }
+
+        #map {
+            height: 800px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<div id="map"></div>
+<div style="position: absolute; bottom: 16px; right: 5px; width: 150px; padding: 5px; height: 80px; background-color: #FFF; border: 1px solid #333;">
+    <svg height="21" width="20"><circle cx="10" cy="13" r="7" stroke="black" stroke-width="1" fill="green" fill-opacity=".8"/></svg>Active Mine<br>
+    <svg height="21" width="20"><circle cx="10" cy="13" r="7" stroke="black" stroke-width="1" fill="yellow" fill-opacity=".8"/></svg>New Mine<br>
+    <svg height="21" width="20"><circle cx="10" cy="13" r="7" stroke="black" stroke-width="1" fill="red" fill-opacity=".8"/></svg>Not Active Mine
+</div>
+<script>
+    // geojson of mine locations
+    var mineLocations = {
+        "type": "FeatureCollection",
+        "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}},
+
+        "features": [
+            {"type": "Feature",
+                "properties": {
+                    "Name": "Carlisle Mine",
+                    "Status": "Active",
+                    "Type": "Underground",
+                    "County": "Sullivan County",
+                    "State": "Indiana",
+                    "Latitude": 38.945439,
+                    "Longitude": -87.394112
+                },
+                "geometry": {"type": "Point", "coordinates": [-87.394112, 38.945439]}
+            },
+            {"type": "Feature",
+                "properties": {
+                    "Name": "Oaktown Fuels Mine No 1 & 2",
+                    "Status": "Active",
+                    "Type": "Underground",
+                    "County": "Knox County",
+                    "State": "Indiana",
+                    "Latitude": 38.861992,
+                    "Longitude": -87.427332
+                },
+                "geometry": {"type": "Point", "coordinates": [-87.427332, 38.861992]}
+            },
+            {"type": "Feature",
+                "properties": {
+                    "Name": "Prosperity Mine",
+                    "Status": "Non Producing",
+                    "Type": "Surface",
+                    "County": "Pike County",
+                    "State": "Indiana",
+                    "Latitude": 38.500000,
+                    "Longitude": -87.400002
+                },
+                "geometry": {"type": "Point", "coordinates": [-87.400001525899995, 38.5]}
+            },
+            {"type": "Feature",
+                "properties": {
+                    "Name": "Bulldog Mine",
+                    "Status": "New Mine",
+                    "Type": "Underground",
+                    "County": "Vermilion County",
+                    "State": "Illinois",
+                    "Latitude": 39.979000,
+                    "Longitude": -87.906000
+                },
+                "geometry": {"type": "Point", "coordinates": [-87.906, 39.979]}
+            },
+            {"type": "Feature",
+                "properties": {
+                    "Name": "Russellville Mine",
+                    "Status": "New Mine",
+                    "Type": "Underground",
+                    "County": "Lawrence County",
+                    "State": "Illinois",
+                    "Latitude": 38.818624,
+                    "Longitude": -87.530214
+                },
+                "geometry": {"type": "Point", "coordinates": [-87.530214, 38.818624]}
+            },
+            {"type": "Feature",
+                "properties": {
+                    "Name": "Ace In The Hole",
+                    "Status": "Active",
+                    "Type": "Surface",
+                    "County": "Clay County",
+                    "State": "Indiana",
+                    "Latitude": 39.275428,
+                    "Longitude": -87.090717
+                },
+                "geometry": {"type": "Point", "coordinates": [-87.090717, 39.275428]}
+            }
+        ]
+    };
+
+    // define click actions
+    function onEachFeature(feature, layer) {
+        var popupContent = "<p><b>" + feature.properties.Name + "</b><br>" + feature.properties.County + ", " + feature.properties.State +"</p>" +
+            "Status: " + feature.properties.Status + "<br>" +
+            "Type: " + feature.properties.Type + "<br>";
+        if (feature.properties && feature.properties.popupContent) {
+            popupContent += feature.properties.popupContent;
+        }
+        layer.bindPopup(popupContent)
+    }
+
+
+    // start leaflet
+    var map = L.map('map').setView([39.359, -87.622], 9);
+
+    var geojsonMarkerOptions = {
+        radius: 8,
+        fillColor: "#ff7800",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    };
+
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+        maxZoom: 18,
+        id: 'actongorton.p0lfp81b',
+        accessToken: 'pk.eyJ1IjoiYWN0b25nb3J0b24iLCJhIjoiYzN6bjdVSSJ9.MrdOhiy7dFMh-9J4S8Oo0g'
+    }).addTo(map);
+
+    // load geojson
+    var makeMap = L.geoJson(mineLocations, {
+        style: function(feature) {
+            switch (feature.properties.Status) {
+                case 'Active':
+                    return {color: "black", fillColor: "green"};
+                case 'New Mine':
+                    return {color: "black", fillColor: "yellow"};
+                case 'Non Producing':
+                    return {color: "black", fillColor: "red"};
+            }
+        },
+        pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, geojsonMarkerOptions)
+        },
+        onEachFeature: onEachFeature
+    })
+    .addTo(map);
+
+    map.fitBounds(makeMap.getBounds(), {
+        padding: [50, 50]
+    });
+</script>
+
+</body>
+</html>
